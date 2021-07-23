@@ -66,7 +66,7 @@ export const networks = [
 		coinGeckoDenom: undefined,
 		decimalPlaces: 12,
 		addressPrefix: 42,
-		nodeWs: "wss://mandala.elara.patract.io/",
+		nodeWs: "wss://acala-mandala.api.onfinality.io/public-ws",
 		erasPerDay: 4,
 		lockUpPeriod: 7,
 		minAmount: 0.1,

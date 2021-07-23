@@ -75,7 +75,6 @@ const AppComponent = () => {
 		let mounted = true
 		getAllTokens(walletInstance).then((tokens) => {
 			if (mounted) {
-				console.log(tokens)
 				setTokens(tokens)
 			}
 		})
