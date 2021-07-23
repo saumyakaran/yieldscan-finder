@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/button"
-import { FormControl, FormLabel } from "@chakra-ui/form-control"
+import { FormControl } from "@chakra-ui/form-control"
 import { useDisclosure } from "@chakra-ui/hooks"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import { Box, Text } from "@chakra-ui/layout"
@@ -19,7 +19,7 @@ const DisplayButton = ({ account, onOpen }) => (
 	<MenuButton
 		as={Button}
 		onClick={onOpen}
-		w="full"
+		w="xs"
 		fontSize="lg"
 		textAlign="left"
 		fontWeight="normal"
@@ -36,7 +36,7 @@ const DisplayButton = ({ account, onOpen }) => (
 					/>
 				</Box>
 			)}
-			<Text display="inline">
+			<Text display="inline" pr={4} isTruncated>
 				{account
 					? get(account, "meta.name") + " - " + get(account, "address")
 					: "Select your account"}
@@ -56,8 +56,7 @@ const AccountInput = () => {
 
 	return (
 		<FormControl>
-			<FormLabel>Account</FormLabel>
-			<Menu w="full" isOpen={isOpen} onClose={onClose}>
+			<Menu w="xs" isOpen={isOpen} onClose={onClose}>
 				<DisplayButton onOpen={onOpen} account={selectedAccount} />
 				<MenuList>
 					<MenuOptionGroup

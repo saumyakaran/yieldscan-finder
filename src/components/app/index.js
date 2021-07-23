@@ -1,7 +1,6 @@
 import React, { useEffect } from "react"
-import { Box, Heading, Stack, Text, useDisclosure } from "@chakra-ui/react"
+import { Heading, Stack, Text, useDisclosure } from "@chakra-ui/react"
 import { Fragment } from "react"
-import ConnectWalletButton from "./wallet-connection/connect-wallet-button"
 import {
 	useLiquidityPools,
 	usePolkadotApi,
@@ -9,18 +8,17 @@ import {
 	useSelectedPool,
 	useSwapRx,
 	useTokens,
-	useWalletConnectionState,
 	useWalletPromise,
 } from "../../lib/store"
-import AccountInput from "./account-input"
 import createPolkadotAPIInstance from "../../lib/polkadot-api"
 import getLiquidityPools from "../../lib/get-liquidity-pools"
-import { get, isNil, map } from "lodash"
+import { isNil } from "lodash"
 import AddLiquidityModal from "./invest/add-liquidity-modal"
 import createPolkadotAPIRxInstance from "../../lib/polkadot-api-rx"
 import getAllTokens from "../../lib/get-all-tokens"
 import createWalletPromise from "../../lib/wallet-promise"
 import createSwapRx from "../../lib/swap-rx"
+import InvestComponent from "./invest"
 
 const AppComponent = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure()
@@ -30,7 +28,6 @@ const AppComponent = () => {
 		setApiRxInstance,
 		setApiInstance,
 	} = usePolkadotApi()
-	const { isWalletConnected } = useWalletConnectionState()
 	const { selectedNetwork } = useSelectedNetwork()
 	const { setSelectedPool } = useSelectedPool()
 	const { liquidityPools, setLiquidityPools } = useLiquidityPools()
@@ -111,16 +108,10 @@ const AppComponent = () => {
 				<Heading as="h1">Explore opportunities</Heading>
 				<Text>Add liquidity to earn fees and incentives</Text>
 			</Stack>
-			<Stack>
-				{map(liquidityPools, (pool) => (
-					<Text key={get(pool, "id")} onClick={() => handleInvest(pool)}>
-						{get(pool, "id[0]")}/{get(pool, "id[1]")}
-					</Text>
-				))}
-			</Stack>
-			<Box mt={12}>
-				{isWalletConnected ? <AccountInput /> : <ConnectWalletButton />}
-			</Box>
+			<InvestComponent
+				liquidityPools={liquidityPools}
+				handleInvest={handleInvest}
+			/>
 			{isOpen && <AddLiquidityModal isOpen={isOpen} onClose={onClose} />}
 		</Fragment>
 	)
