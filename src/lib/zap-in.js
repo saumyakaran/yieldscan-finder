@@ -1,6 +1,7 @@
+import { FixedPointNumber } from "@acala-network/sdk-core"
 import { web3FromAddress } from "@polkadot/extension-dapp"
 import { decodeAddress, encodeAddress } from "@polkadot/util-crypto"
-import { get, map } from "lodash"
+import { get } from "lodash"
 
 const zapIn = async ({ account, swapTxData, addLiquidityTxData }, api) => {
 	const {
@@ -21,8 +22,12 @@ const zapIn = async ({ account, swapTxData, addLiquidityTxData }, api) => {
 	const swapTx = api.tx.dex.swapWithExactSupply(
 		swapParams[0],
 		swapParams[1],
-		swapParams[2] * 10
+		new FixedPointNumber(
+			swapTxData[0].output.balance.toNumber() * (1 - 0.001),
+			swapTxData[0].output.token.decimal
+		).toChainData()
 	)
+	
 	batchedTx.push(swapTx)
 
 	if (swapTxData[1]) {
@@ -30,10 +35,14 @@ const zapIn = async ({ account, swapTxData, addLiquidityTxData }, api) => {
 		const swapTx2 = api.tx.dex.swapWithExactSupply(
 			_swapParams[0],
 			_swapParams[1],
-			_swapParams[2]
+			new FixedPointNumber(
+				swapTxData[1].output.balance.toNumber() * (1 - 0.001),
+				swapTxData[1].output.token.decimal
+			).toChainData()
 		)
 		batchedTx.push(swapTx2)
 	}
+
 	const addLiquidityTx = api.tx.dex.addLiquidity(
 		{ Token: get(lpTokenA, "name") },
 		{ Token: get(lpTokenB, "name") },
@@ -44,7 +53,7 @@ const zapIn = async ({ account, swapTxData, addLiquidityTxData }, api) => {
 
 	batchedTx.push(addLiquidityTx)
 
-	// await api.tx.utility.batchAll(batchedTx).signAndSend(sender)
+	await api.tx.utility.batchAll(batchedTx).signAndSend(sender)
 }
 
 export default zapIn
