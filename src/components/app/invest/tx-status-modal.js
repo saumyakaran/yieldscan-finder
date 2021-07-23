@@ -1,5 +1,5 @@
 import { Modal, ModalBody, ModalContent, ModalOverlay } from "@chakra-ui/modal"
-import { Spinner, Stack, Text } from "@chakra-ui/react"
+import { Spinner, Text } from "@chakra-ui/react"
 import React from "react"
 
 const TxStatusModal = ({ isOpen, onClose, stakingEvent }) => {

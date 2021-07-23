@@ -78,8 +78,7 @@ const zapIn = async (
 				let failed = false
 				events.forEach((d) => {
 					const {
-						phase,
-						event: { data, method, section },
+						event: { method },
 					} = d
 					if (method === "BatchInterrupted" || "ExtrinsicFailed") {
 						failed = true

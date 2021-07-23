@@ -31,8 +31,8 @@ const ConfirmButton = () => {
 	const [addLiquidityTxData, setAddLiquidityTxData] = useState()
 	const [txData, setTxData] = useState()
 	const [stakingEvent, setStakingEvent] = useState()
-	const [transactionHash, setTransactionHash] = useState()
-	const [errorMessage, setErrorMessage] = useState()
+	// const [transactionHash, setTransactionHash] = useState()
+	// const [errorMessage, setErrorMessage] = useState()
 
 	const toast = useToast()
 
@@ -176,7 +176,7 @@ const ConfirmButton = () => {
 				setStakingEvent(eventInfo.message)
 			},
 			onSuccessfullSigning: (hash) => {
-				setTransactionHash(hash.message)
+				// setTransactionHash(hash.message)
 			},
 			onFinish: (status, message, eventLogs, txHash) => {
 				// status = 0 for success, anything else for error code
@@ -198,7 +198,8 @@ const ConfirmButton = () => {
 					// setStakingLoading(false)
 					// setCloseOnOverlayClick(true)
 					if (message !== "Cancelled") {
-						setErrorMessage(message)
+						console.error(message)
+						// setErrorMessage(message)
 						// setChainError(true)
 					}
 				}
