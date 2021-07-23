@@ -1,5 +1,12 @@
 import React, { useEffect } from "react"
-import { Heading, Stack, Text, useDisclosure } from "@chakra-ui/react"
+import {
+	Box,
+	Heading,
+	Stack,
+	Text,
+	useColorMode,
+	useDisclosure,
+} from "@chakra-ui/react"
 import { Fragment } from "react"
 import {
 	useLiquidityPools,
@@ -21,6 +28,7 @@ import createSwapRx from "../../lib/swap-rx"
 import InvestComponent from "./invest"
 
 const AppComponent = () => {
+	const { colorMode } = useColorMode()
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const {
 		apiInstance,
@@ -108,10 +116,17 @@ const AppComponent = () => {
 				<Heading as="h1">Explore opportunities</Heading>
 				<Text>Add liquidity to earn fees and incentives</Text>
 			</Stack>
-			<InvestComponent
-				liquidityPools={liquidityPools}
-				handleInvest={handleInvest}
-			/>
+			<Box
+				border="1px"
+				borderColor={colorMode === "dark" ? "gray.700" : "gray.100"}
+				borderRadius="0.75rem"
+				py={2}
+			>
+				<InvestComponent
+					liquidityPools={liquidityPools}
+					handleInvest={handleInvest}
+				/>
+			</Box>
 			{isOpen && <AddLiquidityModal isOpen={isOpen} onClose={onClose} />}
 		</Fragment>
 	)
