@@ -1,9 +1,15 @@
 import { FixedPointNumber } from "@acala-network/sdk-core"
 import { web3FromAddress } from "@polkadot/extension-dapp"
 import { decodeAddress, encodeAddress } from "@polkadot/util-crypto"
-import { get } from "lodash"
+import { get, isNil } from "lodash"
 
-const zapIn = async ({ account, swapTxData, addLiquidityTxData }, api) => {
+const createEventInstance = (message, ...params) => ({ message, ...params })
+
+const zapIn = async (
+	{ account, swapTxData, addLiquidityTxData },
+	api,
+	{ onEvent, onFinish, onSuccessfullSigning }
+) => {
 	const {
 		lpTokenA,
 		lpTokenB,
@@ -27,7 +33,7 @@ const zapIn = async ({ account, swapTxData, addLiquidityTxData }, api) => {
 			swapTxData[0].output.token.decimal
 		).toChainData()
 	)
-	
+
 	batchedTx.push(swapTx)
 
 	if (swapTxData[1]) {
@@ -53,7 +59,53 @@ const zapIn = async ({ account, swapTxData, addLiquidityTxData }, api) => {
 
 	batchedTx.push(addLiquidityTx)
 
-	await api.tx.utility.batchAll(batchedTx).signAndSend(sender)
+	return api.tx.utility
+		.batchAll(batchedTx)
+		.signAndSend(sender, ({ events = [], status }) => {
+			onEvent(
+				createEventInstance("Waiting for your to sign the transaction...")
+			)
+			if (status.isInBlock) {
+				onEvent(
+					createEventInstance(`Included in block : ${status.asInBlock}...`)
+				)
+				onSuccessfullSigning(createEventInstance(`${status.asInBlock}`))
+			}
+
+			if (status.isFinalized) {
+				const txHash = status.asFinalized.toString()
+				console.info("transaction hash: " + txHash)
+				let failed = false
+				events.forEach((d) => {
+					const {
+						phase,
+						event: { data, method, section },
+					} = d
+					if (method === "BatchInterrupted" || "ExtrinsicFailed") {
+						failed = true
+					}
+				})
+
+				const eventLogs = events.map((d) => {
+					const {
+						phase,
+						event: { data, method, section },
+					} = d
+					return `${phase}: ${section}.${method}:: ${data}`
+				})
+
+				console.log(eventLogs)
+
+				onFinish(
+					failed ? 1 : 0,
+					failed
+						? "Transaction failed due to unknown reason"
+						: "Added liquidity",
+					eventLogs,
+					isNil(txHash) ? "N/A" : txHash
+				)
+			}
+		})
 }
 
 export default zapIn

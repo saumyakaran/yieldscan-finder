@@ -1,5 +1,5 @@
 import { FixedPointNumber } from "@acala-network/sdk-core"
-import { Button } from "@chakra-ui/react"
+import { Button, useDisclosure, useToast } from "@chakra-ui/react"
 import { get, isEqual, isFinite, isNil } from "lodash"
 import React, { useEffect, useState } from "react"
 import getSwapTarget from "../../../../lib/get-swap-target"
@@ -14,8 +14,10 @@ import {
 	useWalletPromise,
 } from "../../../../lib/store"
 import zapIn from "../../../../lib/zap-in"
+import TxStatusModal from "../tx-status-modal"
 
 const ConfirmButton = () => {
+	const { isOpen, onOpen, onClose } = useDisclosure()
 	const { isWalletConnected } = useWalletConnectionState()
 	const { swapRx } = useSwapRx()
 	const { walletInstance } = useWalletPromise()
@@ -28,6 +30,11 @@ const ConfirmButton = () => {
 	const [swapTxData, setSwapTxData] = useState([])
 	const [addLiquidityTxData, setAddLiquidityTxData] = useState()
 	const [txData, setTxData] = useState()
+	const [stakingEvent, setStakingEvent] = useState()
+	const [transactionHash, setTransactionHash] = useState()
+	const [errorMessage, setErrorMessage] = useState()
+
+	const toast = useToast()
 
 	useEffect(() => {
 		let mounted = true
@@ -163,25 +170,69 @@ const ConfirmButton = () => {
 	}, [addLiquidityTxData, selectedAccount, swapTxData])
 
 	const transactionHandler = () => {
-		console.log(txData)
-		zapIn(txData, apiInstance)
+		onOpen()
+		const handlers = {
+			onEvent: (eventInfo) => {
+				setStakingEvent(eventInfo.message)
+			},
+			onSuccessfullSigning: (hash) => {
+				setTransactionHash(hash.message)
+			},
+			onFinish: (status, message, eventLogs, txHash) => {
+				// status = 0 for success, anything else for error code
+				toast({
+					title: status === 0 ? "Successful!" : "Error!",
+					status: status === 0 ? "success" : "error",
+					description: message,
+					position: "top-right",
+					isClosable: true,
+					duration: 7000,
+				})
+
+				onClose()
+
+				if (status === 0) {
+					// setStakingLoading(false)
+					// setCloseOnOverlayClick(true)
+				} else {
+					// setStakingLoading(false)
+					// setCloseOnOverlayClick(true)
+					if (message !== "Cancelled") {
+						setErrorMessage(message)
+						// setChainError(true)
+					}
+				}
+			},
+		}
+		zapIn(txData, apiInstance, handlers).catch((error) => {
+			handlers.onFinish(1, error.message)
+		})
 	}
 
 	return (
-		<Button
-			colorScheme="purple"
-			size="lg"
-			disabled={
-				!isWalletConnected ||
-				isNil(txData) ||
-				!isFinite(Number(inputAmount)) ||
-				Number(inputAmount) <= 0 ||
-				get(target, "length") !== get(swapTxData, "length")
-			}
-			onClick={transactionHandler}
-		>
-			Confirm
-		</Button>
+		<>
+			<Button
+				colorScheme="purple"
+				size="lg"
+				disabled={
+					!isWalletConnected ||
+					isNil(txData) ||
+					!isFinite(Number(inputAmount)) ||
+					Number(inputAmount) <= 0 ||
+					get(target, "length") !== get(swapTxData, "length")
+				}
+				onClick={transactionHandler}
+			>
+				Confirm
+			</Button>
+			{isOpen && (
+				<TxStatusModal
+					isOpen={isOpen}
+					onClose={onClose}
+					stakingEvent={stakingEvent}
+				/>
+			)}
+		</>
 	)
 }
 
