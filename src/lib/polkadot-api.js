@@ -1,4 +1,6 @@
-import { WsProvider, ApiPromise } from "@polkadot/api"
+import { ApiPromise } from "@polkadot/api"
+import { WsProvider } from "@polkadot/rpc-provider"
+import { options } from "@acala-network/api"
 
 const createPolkadotAPIInstance = async (networkInfo, apiInstance) => {
 	if (apiInstance) {
@@ -7,7 +9,9 @@ const createPolkadotAPIInstance = async (networkInfo, apiInstance) => {
 	}
 	const wsURL = networkInfo.nodeWs
 	const provider = new WsProvider(wsURL)
-	const api = await ApiPromise.create({ provider: provider })
+	const api = new ApiPromise(options({ provider }))
+
+	await api.isReady
 
 	return api
 }

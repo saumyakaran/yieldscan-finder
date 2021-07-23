@@ -1,7 +1,7 @@
-export const appName = "My new polkadot app"
+export const appName = "YieldScan"
 
 // Selected network
-const selectedNetwork = `Westend`
+const selectedNetwork = `Acala Mandala`
 
 // Substrate networks
 export const networks = [
