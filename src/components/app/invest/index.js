@@ -12,7 +12,7 @@ import { get, map } from "lodash"
 
 const InvestComponent = ({ liquidityPools, handleInvest }) => {
 	return (
-		<Table variant="striped">
+		<Table>
 			<TableCaption>End of list</TableCaption>
 			<Thead>
 				<Tr>
