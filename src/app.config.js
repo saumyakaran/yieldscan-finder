@@ -75,6 +75,19 @@ export const networks = [
 	},
 ]
 
+// TODO: Replace with internal links
+export const tokenImage = {
+	AUSD: "https://apps.acala.network/static/media/AUSD.439bc3f2.png",
+	ACA: "https://apps.acala.network/static/media/ACA.96bf6b59.svg",
+	DOT: "https://apps.acala.network/static/media/DOT.59c3bd06.svg",
+	LDOT: "https://apps.acala.network/static/media/LDOT.2fb76173.svg",
+	XBTC: "https://apps.acala.network/static/media/BTC.4ee9cb39.svg",
+	RENBTC: "https://apps.acala.network/static/media/REN.dd61c20d.svg",
+	POLKABTC: "https://apps.acala.network/static/media/polkaBTC.27cccd4a.svg",
+	PLM: "https://apps.acala.network/static/media/plasm.6f74714d.png",
+	PHA: "https://apps.acala.network/static/media/phala.fa4f3631.svg",
+}
+
 export const getNetworkInfo = (networkName) => {
 	return networks.find(({ name }) => name === networkName)
 }
