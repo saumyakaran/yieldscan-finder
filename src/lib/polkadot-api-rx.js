@@ -7,11 +7,13 @@ const createPolkadotAPIRxInstance = async (networkInfo, apiInstance) => {
 		console.info("Polkadot api rx instance aleady exists.")
 		return apiInstance
 	}
+	console.info(`connecting to ${networkInfo.nodeWs}`)
 	const wsURL = networkInfo.nodeWs
 	const provider = new WsProvider(wsURL)
 	const api = ApiRx.create(options({ provider })).toPromise()
 
 	await api.isReady
+	console.info(`connected to ${networkInfo.nodeWs}`)
 
 	return api
 }

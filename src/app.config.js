@@ -1,7 +1,7 @@
 export const appName = "YieldScan"
 
 // Selected network
-const selectedNetwork = `Acala Mandala`
+const selectedNetwork = `Karura`
 
 // Substrate networks
 export const networks = [
@@ -64,7 +64,7 @@ export const networks = [
 		denom: "ACA",
 		twitterUrl: "@AcalaNetwork",
 		coinGeckoDenom: undefined,
-		decimalPlaces: 12,
+		decimalPlaces: 13,
 		addressPrefix: 42,
 		nodeWs: "wss://acala-mandala.api.onfinality.io/public-ws",
 		erasPerDay: 4,
@@ -72,6 +72,20 @@ export const networks = [
 		minAmount: 0.1,
 		recommendedAdditionalAmount: 0.5,
 		about: "Mandala is one of the test networks for Acala Network.",
+	},
+	{
+		id: "karura",
+		name: "Karura",
+		network: "karura",
+		isTestNetwork: false,
+		denom: "KAR",
+		twitterUrl: "@KaruraNetwork",
+		coinGeckoDenom: undefined,
+		decimalPlaces: 12,
+		addressPrefix: 42,
+		nodeWs: "wss://karura.kusama.elara.patract.io",
+		erasPerDay: 4,
+		about: "Karura is the DeFi hub for Kusama",
 	},
 ]
 

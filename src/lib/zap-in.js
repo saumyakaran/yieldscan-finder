@@ -8,7 +8,8 @@ const createEventInstance = (message, ...params) => ({ message, ...params })
 const zapIn = async (
 	{ account, swapTxData, addLiquidityTxData },
 	api,
-	{ onEvent, onFinish, onSuccessfullSigning }
+	{ onEvent, onFinish, onSuccessfullSigning },
+	networkId
 ) => {
 	const {
 		lpTokenA,
@@ -49,13 +50,23 @@ const zapIn = async (
 		batchedTx.push(swapTx2)
 	}
 
-	const addLiquidityTx = api.tx.dex.addLiquidity(
-		{ Token: get(lpTokenA, "name") },
-		{ Token: get(lpTokenB, "name") },
-		maxLiquidityA.toChainData(),
-		maxLiquidityB.toChainData(),
-		withStake
-	)
+	const addLiquidityTx =
+		networkId === "mandala"
+			? api.tx.dex.addLiquidity(
+					{ Token: get(lpTokenA, "name") },
+					{ Token: get(lpTokenB, "name") },
+					maxLiquidityA.toChainData(),
+					maxLiquidityB.toChainData(),
+					withStake
+			  )
+			: api.tx.dex.addLiquidity(
+					{ Token: get(lpTokenA, "name") },
+					{ Token: get(lpTokenB, "name") },
+					maxLiquidityA.toChainData(),
+					maxLiquidityB.toChainData(),
+					0,
+					withStake
+			  )
 
 	batchedTx.push(addLiquidityTx)
 

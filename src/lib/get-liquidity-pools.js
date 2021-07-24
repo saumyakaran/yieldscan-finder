@@ -4,6 +4,7 @@ import { assert } from "@polkadot/util"
 const getLiquidityPools = async (api) => {
 	let pools
 	if (api) {
+		console.info("api found, fetching pools")
 		const _filterFn = (status) => status.isEnabled
 		const poolData = await api.query.dex.tradingPairStatuses.entries()
 		const filteredData = filter(poolData, (item) => _filterFn(item[1]))

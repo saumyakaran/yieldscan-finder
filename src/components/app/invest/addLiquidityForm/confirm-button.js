@@ -8,6 +8,7 @@ import {
 	useInputAmount,
 	useInputToken,
 	usePolkadotApi,
+	useSelectedNetwork,
 	useSelectedPool,
 	useSwapRx,
 	useWalletConnectionState,
@@ -22,6 +23,7 @@ const ConfirmButton = () => {
 	const { swapRx } = useSwapRx()
 	const { walletInstance } = useWalletPromise()
 	const { apiInstance } = usePolkadotApi()
+	const { selectedNetwork } = useSelectedNetwork()
 	const { selectedAccount } = useAccounts()
 	const { selectedPool } = useSelectedPool()
 	const { inputToken } = useInputToken()
@@ -63,8 +65,12 @@ const ConfirmButton = () => {
 						new FixedPointNumber(inputAmount / 2, get(inputToken, "decimal")),
 						"EXACT_INPUT"
 					)
-					.subscribe((val) => setSwapTxData([val]))
-					.unsubscribe()
+					.subscribe(
+						(val) => {
+							setSwapTxData([val])
+						},
+						(error) => console.error(error)
+					)
 			} else if (isEqual(target.length, 2)) {
 				swapRx
 					.swap(
@@ -80,21 +86,22 @@ const ConfirmButton = () => {
 										return [val, s[1]]
 									} else return [val]
 								})
-							swapRx
-								.swap(
-									[get(val, "output.token"), target[1]],
-									new FixedPointNumber(
-										get(val, "output.balance").toNumber() / 2,
-										get(val, "output.token.decimal")
-									),
-									"EXACT_INPUT"
-								)
-								.subscribe(
-									(val) => {
-										if (mounted) setSwapTxData((s) => [s[0], val])
-									},
-									(error) => console.error(error.message)
-								)
+							get(val, "output.balance") &&
+								swapRx
+									.swap(
+										[get(val, "output.token"), target[1]],
+										new FixedPointNumber(
+											get(val, "output.balance").toNumber() / 2,
+											get(val, "output.token.decimal")
+										),
+										"EXACT_INPUT"
+									)
+									.subscribe(
+										(val) => {
+											if (mounted) setSwapTxData((s) => [s[0], val])
+										},
+										(error) => console.error(error.message)
+									)
 						},
 						(error) => console.error(error)
 					)
@@ -205,7 +212,7 @@ const ConfirmButton = () => {
 				}
 			},
 		}
-		zapIn(txData, apiInstance, handlers).catch((error) => {
+		zapIn(txData, apiInstance, handlers, get(selectedNetwork, "id")).catch((error) => {
 			handlers.onFinish(1, error.message)
 		})
 	}

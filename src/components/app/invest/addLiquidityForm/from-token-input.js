@@ -36,20 +36,12 @@ const FromTokenInput = () => {
 			const _fromToken = walletInstance.getToken(value)
 			setFromTokenName(value)
 			setInputToken(_fromToken)
-			console.log(_fromToken)
 		}
 	}
 
 	useEffect(() => {
-		setInputToken({
-			chain: undefined,
-			decimal: 13,
-			isDexShare: false,
-			isERC20: false,
-			isTokenSymbol: true,
-			name: "ACA",
-		})
-	}, [setInputToken])
+		setInputToken(get(tokens, "[0]"))	
+	}, [tokens, setInputToken])
 
 	return (
 		<FormControl
@@ -78,6 +70,7 @@ const FromTokenInput = () => {
 					/>
 					<Select
 						value={fromTokenName}
+						defaultValue={get(selectedNetwork, "denom")}
 						onChange={handleToken}
 						fontSize="xl"
 						fontWeight="medium"
