@@ -91,7 +91,7 @@ const zapIn = async (
 					const {
 						event: { method },
 					} = d
-					if (method === "BatchInterrupted" || "ExtrinsicFailed") {
+					if (method === "BatchInterrupted" || method === "ExtrinsicFailed") {
 						failed = true
 					}
 				})
