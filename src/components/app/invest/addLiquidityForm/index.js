@@ -5,7 +5,7 @@ import FromTokenInput from "./from-token-input"
 import ToTokenInfo from "./to-token-info"
 
 const AddLiquidityForm = () => (
-	<Stack spacing={4}>
+	<Stack spacing={4} pb={4}>
 		<FromTokenInput />
         <ToTokenInfo />
         <ConfirmButton />
