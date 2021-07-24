@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react"
 import { Fragment } from "react"
 import {
+	useAccounts,
 	useLiquidityPools,
 	usePolkadotApi,
 	useSelectedNetwork,
@@ -28,6 +29,7 @@ import createWalletPromise from "../../lib/wallet-promise"
 import createSwapRx from "../../lib/swap-rx"
 import NetworkInput from "./network-input"
 import ExploreTable from "./explore-table"
+import CurrentInvestmentsTable from "./current-investments-table"
 
 const AppComponent = () => {
 	const { colorMode } = useColorMode()
@@ -44,6 +46,7 @@ const AppComponent = () => {
 	const { walletInstance, setWalletInstance } = useWalletPromise()
 	const { setSwapRx } = useSwapRx()
 	const { setTokens } = useTokens()
+	const { selectedAccount } = useAccounts()
 
 	const handleInvest = (pool) => {
 		setSelectedPool(pool)
@@ -114,12 +117,33 @@ const AppComponent = () => {
 
 	return (
 		<Fragment>
+			{!isNil(selectedAccount) && (
+				<Fragment>
+					<HStack justify="space-between">
+						<Stack my={8} w="full">
+							<Heading as="h1" size="lg">
+								Current investments
+							</Heading>
+						</Stack>
+					</HStack>
+					<Box
+						border="1px"
+						borderColor={colorMode === "dark" ? "gray.700" : "gray.100"}
+						borderRadius="0.75rem"
+						py={2}
+					>
+						<CurrentInvestmentsTable />
+					</Box>
+				</Fragment>
+			)}
 			<HStack justify="space-between">
 				<Stack my={8} w="full">
-					<Heading as="h1" size="lg">Explore opportunities</Heading>
+					<Heading as="h1" size="lg">
+						Explore opportunities
+					</Heading>
 					<Text>Add liquidity to earn fees and incentives</Text>
 				</Stack>
-				<NetworkInput />
+				{isNil(selectedAccount) && <NetworkInput />}
 			</HStack>
 			<Box
 				border="1px"
