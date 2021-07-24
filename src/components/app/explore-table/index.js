@@ -15,7 +15,7 @@ import {
 import { get, map } from "lodash"
 import { tokenImage } from "../../../app.config"
 
-const InvestComponent = ({ liquidityPools, handleInvest }) => {
+const ExploreTable = ({ liquidityPools, handleInvest }) => {
 	const { colorMode } = useColorMode()
 	return (
 		<Table>
@@ -69,4 +69,4 @@ const InvestComponent = ({ liquidityPools, handleInvest }) => {
 	)
 }
 
-export default InvestComponent
+export default ExploreTable

@@ -25,15 +25,14 @@ const DisplayButton = ({ selectedNetwork, onOpen }) => (
 		as={Button}
 		onClick={onOpen}
 		w="xs"
-		fontSize="lg"
 		textAlign="left"
 		fontWeight="normal"
 		rightIcon={<ChevronDownIcon />}
-		py={8}
+		py={6}
 	>
 		<Box as="span" w="full" display="flex" alignItems="center">
 			{get(selectedNetwork, "name") && (
-				<Avatar name={get(selectedNetwork, "name")} mr={2} />
+				<Avatar name={get(selectedNetwork, "name")} mr={2} size="sm" />
 			)}
 			<Text display="inline" pr={4} isTruncated>
 				{selectedNetwork ? get(selectedNetwork, "name") : "Select a network"}
@@ -79,7 +78,7 @@ const NetworkInput = () => {
 								value={get(network, "name")}
 							>
 								<Box display="flex" alignItems="center">
-									<Avatar name={get(network, "name")} mr={2} />
+									<Avatar name={get(network, "name")} mr={2} size="sm" />
 									<Text display="inline">{get(network, "name")}</Text>
 								</Box>
 							</MenuItemOption>

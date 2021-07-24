@@ -21,13 +21,13 @@ import {
 import createPolkadotAPIInstance from "../../lib/polkadot-api"
 import getLiquidityPools from "../../lib/get-liquidity-pools"
 import { isNil } from "lodash"
-import AddLiquidityModal from "./invest/add-liquidity-modal"
+import AddLiquidityModal from "./explore-table/add-liquidity-modal"
 import createPolkadotAPIRxInstance from "../../lib/polkadot-api-rx"
 import getAllTokens from "../../lib/get-all-tokens"
 import createWalletPromise from "../../lib/wallet-promise"
 import createSwapRx from "../../lib/swap-rx"
-import InvestComponent from "./invest"
 import NetworkInput from "./network-input"
+import ExploreTable from "./explore-table"
 
 const AppComponent = () => {
 	const { colorMode } = useColorMode()
@@ -116,7 +116,7 @@ const AppComponent = () => {
 		<Fragment>
 			<HStack justify="space-between">
 				<Stack my={8} w="full">
-					<Heading as="h1">Explore opportunities</Heading>
+					<Heading as="h1" size="lg">Explore opportunities</Heading>
 					<Text>Add liquidity to earn fees and incentives</Text>
 				</Stack>
 				<NetworkInput />
@@ -127,7 +127,7 @@ const AppComponent = () => {
 				borderRadius="0.75rem"
 				py={2}
 			>
-				<InvestComponent
+				<ExploreTable
 					liquidityPools={liquidityPools}
 					handleInvest={handleInvest}
 				/>
