@@ -2,6 +2,7 @@ import React, { useEffect } from "react"
 import {
 	Box,
 	Heading,
+	HStack,
 	Stack,
 	Text,
 	useColorMode,
@@ -26,6 +27,7 @@ import getAllTokens from "../../lib/get-all-tokens"
 import createWalletPromise from "../../lib/wallet-promise"
 import createSwapRx from "../../lib/swap-rx"
 import InvestComponent from "./invest"
+import NetworkInput from "./network-input"
 
 const AppComponent = () => {
 	const { colorMode } = useColorMode()
@@ -112,10 +114,13 @@ const AppComponent = () => {
 
 	return (
 		<Fragment>
-			<Stack my={8}>
-				<Heading as="h1">Explore opportunities</Heading>
-				<Text>Add liquidity to earn fees and incentives</Text>
-			</Stack>
+			<HStack justify="space-between">
+				<Stack my={8} w="full">
+					<Heading as="h1">Explore opportunities</Heading>
+					<Text>Add liquidity to earn fees and incentives</Text>
+				</Stack>
+				<NetworkInput />
+			</HStack>
 			<Box
 				border="1px"
 				borderColor={colorMode === "dark" ? "gray.700" : "gray.100"}

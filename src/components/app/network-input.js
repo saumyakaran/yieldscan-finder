@@ -64,7 +64,7 @@ const NetworkInput = () => {
 	}
 
 	return (
-		<FormControl>
+		<FormControl w="auto">
 			<Menu w="xs" isOpen={isOpen} onClose={onClose}>
 				<DisplayButton onOpen={onOpen} selectedNetwork={selectedNetwork} />
 				<MenuList>

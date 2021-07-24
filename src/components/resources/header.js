@@ -5,7 +5,6 @@ import React from "react"
 import { useWalletConnectionState } from "../../lib/store"
 import AccountInput from "../app/account-input"
 import ConnectWalletButton from "../app/wallet-connection/connect-wallet-button"
-import NetworkInput from "../app/network-input"
 
 const Header = () => {
 	const { toggleColorMode } = useColorMode()
@@ -22,7 +21,6 @@ const Header = () => {
 				<Box mr={8}>
 					{isWalletConnected ? <AccountInput /> : <ConnectWalletButton />}
 				</Box>
-				<NetworkInput />
 				<IconButton
 					icon={<CgDarkMode size="40px" />}
 					onClick={toggleColorMode}
