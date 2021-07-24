@@ -12,8 +12,14 @@ import {
 } from "@chakra-ui/menu"
 import Identicon from "@polkadot/react-identicon"
 import { find, get, map } from "lodash"
-import React from "react"
-import { useAccounts } from "../../lib/store"
+import React, { useEffect } from "react"
+import getCurrentInvestments from "../../lib/get-current-investments"
+import {
+	useAccounts,
+	useCurrentInvestments,
+	useLiquidityPools,
+	useWalletPromise,
+} from "../../lib/store"
 
 const DisplayButton = ({ account, onOpen }) => (
 	<MenuButton
@@ -48,11 +54,28 @@ const DisplayButton = ({ account, onOpen }) => (
 const AccountInput = () => {
 	const { isOpen, onClose, onOpen } = useDisclosure()
 	const { accounts, selectedAccount, setSelectedAccount } = useAccounts()
+	const { setCurrentInvestments } = useCurrentInvestments()
+	const { liquidityPools } = useLiquidityPools()
+	const { walletInstance } = useWalletPromise()
 
 	const accountHandler = (account) => {
 		setSelectedAccount(find(accounts, (acc) => get(acc, "address") === account))
 		onClose()
 	}
+
+	useEffect(() => {
+		let mounted = true
+		if (mounted && selectedAccount && walletInstance && liquidityPools)
+			getCurrentInvestments({
+				accountId: get(selectedAccount, "address"),
+				liquidityPools,
+				walletInstance,
+			}).then((investments) => setCurrentInvestments(investments))
+
+		return () => {
+			mounted = false
+		}
+	}, [liquidityPools, setCurrentInvestments, walletInstance, selectedAccount])
 
 	return (
 		<FormControl>

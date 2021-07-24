@@ -82,7 +82,7 @@ export const networks = [
 		twitterUrl: "@KaruraNetwork",
 		coinGeckoDenom: undefined,
 		decimalPlaces: 12,
-		addressPrefix: 42,
+		addressPrefix: 8,
 		nodeWs: "wss://karura.kusama.elara.patract.io",
 		erasPerDay: 4,
 		about: "Karura is the DeFi hub for Kusama",

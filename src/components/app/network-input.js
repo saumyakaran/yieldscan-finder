@@ -11,12 +11,17 @@ import {
 	MenuOptionGroup,
 } from "@chakra-ui/menu"
 import { Avatar } from "@chakra-ui/react"
+import { decodeAddress, encodeAddress } from "@polkadot/util-crypto"
 import { get, map } from "lodash"
-import React from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { getNetworkInfo } from "../../app.config"
+import getWallet from "../../lib/polkadot-extension"
 import {
+	useAccounts,
+	useCurrentInvestments,
 	usePolkadotApi,
 	useSelectedNetwork,
+	useWalletConnectionState,
 	useWalletPromise,
 } from "../../lib/store"
 
@@ -46,6 +51,11 @@ const NetworkInput = () => {
 	const { isOpen, onClose, onOpen } = useDisclosure()
 	const { selectedNetwork, setSelectedNetwork } = useSelectedNetwork()
 	const { setWalletInstance } = useWalletPromise()
+	const { setAccounts, setSelectedAccount } = useAccounts()
+	const { isWalletConnected } = useWalletConnectionState()
+	const { setCurrentInvestments } = useCurrentInvestments()
+	// eslint-disable-next-line
+	const [extensionEvent, setExtensionEvent] = useState()
 
 	const { setApiRxInstance, setApiInstance } = usePolkadotApi()
 
@@ -53,6 +63,9 @@ const NetworkInput = () => {
 		setApiInstance(null)
 		setApiRxInstance(null)
 		setWalletInstance(null)
+		setAccounts(null)
+		setSelectedAccount(null)
+		setCurrentInvestments(null)
 	}
 
 	const networkHandler = (network) => {
@@ -61,6 +74,42 @@ const NetworkInput = () => {
 
 		onClose()
 	}
+
+	const walletEventHandler = useMemo(
+		() => ({
+			onEvent: (eventInfo) => {
+				setExtensionEvent(eventInfo.message)
+			},
+		}),
+		[setExtensionEvent]
+	)
+
+	useEffect(() => {
+		let isMounted = true
+		if (isWalletConnected)
+			getWallet(walletEventHandler)
+				.then(({ isExtensionAvailable, accounts = [] }) => {
+					if (isMounted) {
+						if (isExtensionAvailable) {
+							if (accounts.length) {
+								accounts.forEach((x) => {
+									x.address = encodeAddress(
+										decodeAddress(x.address.toString()),
+										get(selectedNetwork, "addressPrefix")
+									)
+								})
+								setAccounts(accounts)
+							}
+						}
+					}
+				})
+				.catch((error) => {
+					console.error(error)
+				})
+		return () => {
+			isMounted = false
+		}
+	}, [selectedNetwork, setAccounts, isWalletConnected, walletEventHandler])
 
 	return (
 		<FormControl w="auto">

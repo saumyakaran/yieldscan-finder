@@ -125,6 +125,7 @@ const AppComponent = () => {
 								Current investments
 							</Heading>
 						</Stack>
+						<NetworkInput />
 					</HStack>
 					<Box
 						border="1px"

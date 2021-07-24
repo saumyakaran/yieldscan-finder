@@ -56,6 +56,12 @@ const useLiquidityPools = create((set) => ({
 	setLiquidityPools: (lp) => set(() => ({ liquidityPools: lp })),
 }))
 
+const useCurrentInvestments = create((set) => ({
+	currentInvestments: null,
+	setCurrentInvestments: (currentInvestments) =>
+		set(() => ({ currentInvestments })),
+}))
+
 const useTokens = create((set) => ({
 	tokens: null,
 	setTokens: (tokens) => set(() => ({ tokens: tokens })),
@@ -72,5 +78,6 @@ export {
 	useWalletPromise,
 	useSwapRx,
 	useLiquidityPools,
+	useCurrentInvestments,
 	useTokens,
 }

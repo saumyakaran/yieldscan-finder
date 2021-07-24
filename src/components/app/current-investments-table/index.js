@@ -2,6 +2,8 @@ import {
 	Avatar,
 	Box,
 	Button,
+	HStack,
+	IconButton,
 	Table,
 	TableCaption,
 	Tbody,
@@ -12,13 +14,16 @@ import {
 	Tr,
 	useColorMode,
 } from "@chakra-ui/react"
+import { CgMoreVerticalAlt } from "react-icons/cg"
 import { get, map } from "lodash"
 import { tokenImage } from "../../../app.config"
+import { useCurrentInvestments } from "../../../lib/store"
 
-const CurrentInvestmentsTable = ({ liquidityPools, handleInvest }) => {
+const CurrentInvestmentsTable = () => {
 	const { colorMode } = useColorMode()
+	const { currentInvestments } = useCurrentInvestments()
 	return (
-		<Table>
+		<Table opacity={0.5} _hover={{cursor: "not-allowed"}}>
 			<TableCaption>Coming soon</TableCaption>
 			<Thead>
 				<Tr>
@@ -28,21 +33,21 @@ const CurrentInvestmentsTable = ({ liquidityPools, handleInvest }) => {
 				</Tr>
 			</Thead>
 			<Tbody>
-				{map(liquidityPools, (pool, index) => (
-					<Tr key={get(pool, "id")}>
+				{map(currentInvestments, (investment, index) => (
+					<Tr key={get(investment, "pool.id")}>
 						<Td>
 							<Box display="flex" alignItems="center">
 								<Avatar
-									name={get(pool, "id[0]")}
-									src={get(tokenImage, get(pool, "id[0]"))}
+									name={get(investment, "pool.id[0]")}
+									src={get(tokenImage, get(investment, "pool.id[0]"))}
 									border="3px solid"
 									borderColor={colorMode === "dark" ? "gray.600" : "gray.100"}
 									color={colorMode === "dark" ? "gray.600" : "gray.100"}
 									backgroundColor="white"
 								/>
 								<Avatar
-									name={get(pool, "id[1]")}
-									src={get(tokenImage, get(pool, "id[1]"))}
+									name={get(investment, "pool.id[1]")}
+									src={get(tokenImage, get(investment, "pool.id[1]"))}
 									ml={-4}
 									border="3px solid"
 									borderColor={colorMode === "dark" ? "gray.600" : "gray.100"}
@@ -50,14 +55,24 @@ const CurrentInvestmentsTable = ({ liquidityPools, handleInvest }) => {
 									backgroundColor="white"
 								/>
 								<Text display="inline-block" ml={2} fontWeight="medium">
-									{get(pool, "id[0]")}/{get(pool, "id[1]")}
+									{get(investment, "pool.id[0]")}/
+									{get(investment, "pool.id[1]")}
 								</Text>
 							</Box>
 						</Td>
-						<Td>-</Td>
-						<Td isNumeric>N/A</Td>
+						<Td>{get(investment, "value")}</Td>
 						<Td isNumeric>
-							<Button onClick={() => handleInvest(pool)}>Invest</Button>
+							<HStack justify="flex-end">
+								<Button isDisabled onClick={() => console.log("Claim")}>
+									Claim
+								</Button>
+								<IconButton
+									isDisabled
+									aria-label="More options"
+									icon={<CgMoreVerticalAlt />}
+									onClick={() => console.log("More")}
+								/>
+							</HStack>
 						</Td>
 					</Tr>
 				))}
