@@ -1,1 +1,1 @@
-TBD
+A simple proof of concept for a yield finder app for the polkadot/kusama ecosystem. Currently only supports Acala Mandala Liquidity Pools.
