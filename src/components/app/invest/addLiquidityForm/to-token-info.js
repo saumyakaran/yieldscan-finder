@@ -1,10 +1,13 @@
-import { Avatar, HStack, Stack, Text } from "@chakra-ui/react"
+import { Avatar, HStack, Stack, Text, useColorMode } from "@chakra-ui/react"
 import { get } from "lodash"
 import React from "react"
-import { useSelectedPool } from "../../../../lib/store"
+import { tokenImage } from "../../../../app.config"
+import { useSelectedNetwork, useSelectedPool } from "../../../../lib/store"
 
 const ToTokenInfo = () => {
+	const { colorMode } = useColorMode()
 	const { selectedPool } = useSelectedPool()
+	const { selectedNetwork } = useSelectedNetwork()
 	const token1 = get(selectedPool, "pool[0].token")
 	const token2 = get(selectedPool, "pool[1].token")
 
@@ -21,7 +24,14 @@ const ToTokenInfo = () => {
 				To
 			</Text>
 			<HStack>
-				<Avatar name={selectedPool && token1 + " " + token2} size="sm" />
+				<Avatar
+					name={selectedPool && token1 + " " + token2}
+					src={get(tokenImage, get(selectedNetwork, "denom"))}
+					border="3px solid"
+					borderColor={colorMode === "dark" ? "gray.600" : "gray.100"}
+					color={colorMode === "dark" ? "gray.600" : "gray.100"}
+					backgroundColor="white"
+				/>
 				<Text fontSize="xl" fontWeight="medium">
 					{selectedPool && token1 + "/" + token2}
 				</Text>
