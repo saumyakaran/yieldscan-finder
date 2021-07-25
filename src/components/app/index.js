@@ -21,7 +21,7 @@ import {
 } from "../../lib/store"
 import createPolkadotAPIInstance from "../../lib/polkadot-api"
 import getLiquidityPools from "../../lib/get-liquidity-pools"
-import { isNil } from "lodash"
+import { get, isNil } from "lodash"
 import AddLiquidityModal from "./explore-table/add-liquidity-modal"
 import createPolkadotAPIRxInstance from "../../lib/polkadot-api-rx"
 import getAllTokens from "../../lib/get-all-tokens"
@@ -96,6 +96,7 @@ const AppComponent = () => {
 	useEffect(() => {
 		let mounted = true
 		if (!walletInstance && apiInstance) {
+			console.info("creating wallet instance...")
 			createWalletPromise(apiInstance, walletInstance).then((wallet) => {
 				if (mounted) setWalletInstance(wallet)
 			})
@@ -104,6 +105,17 @@ const AppComponent = () => {
 			mounted = false
 		}
 	}, [apiInstance, walletInstance, setWalletInstance])
+
+	useEffect(() => {
+		if (
+			get(apiInstance, "runtimeChain") &&
+			get(walletInstance, "runtimeChain") &&
+			!isNil(walletInstance)
+		) {
+			apiInstance.runtimeChain.toString() !== walletInstance.runtimeChain &&
+				setWalletInstance(null)
+		}
+	}, [apiInstance, setWalletInstance, walletInstance])
 
 	useEffect(() => {
 		let mounted = true

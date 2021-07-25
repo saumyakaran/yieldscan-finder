@@ -9,7 +9,10 @@ const zapIn = async (
 	{ account, swapTxData, addLiquidityTxData },
 	api,
 	{ onEvent, onFinish, onSuccessfullSigning },
-	networkId
+	networkId,
+	networkPrefix,
+	isTipping,
+	inputAmount
 ) => {
 	const {
 		lpTokenA,
@@ -20,6 +23,10 @@ const zapIn = async (
 	} = addLiquidityTxData
 
 	const sender = encodeAddress(decodeAddress(account), 42)
+	const tipAddress = encodeAddress(
+		decodeAddress("5EFG7GMBiJLSJHn3uyfumvrn7Fr4ECTWs6eNftf9vVfKCsA5"),
+		networkPrefix
+	)
 	const injector = await web3FromAddress(sender)
 	api.setSigner(injector.signer)
 
@@ -70,52 +77,62 @@ const zapIn = async (
 
 	batchedTx.push(addLiquidityTx)
 
-	return api.tx.utility
-		.batchAll(batchedTx)
-		.signAndSend(sender, ({ events = [], status }) => {
-			onEvent(
-				createEventInstance("Waiting for your to sign the transaction...")
-			)
-			if (status.isInBlock) {
-				onEvent(
-					createEventInstance(`Included in block : ${status.asInBlock}...`)
-				)
-				onSuccessfullSigning(createEventInstance(`${status.asInBlock}`))
-			}
+	const tipTx = api.tx.currencies.transfer(
+		tipAddress,
+		swapParams[0][0],
+		new FixedPointNumber(
+			swapTxData[0].input.balance.toNumber() * 0.001,
+			swapTxData[0].input.token.decimal
+		).toChainData()
+	)
+	if (isTipping) batchedTx.push(tipTx)
 
-			if (status.isFinalized) {
-				const txHash = status.asFinalized.toString()
-				console.info("transaction hash: " + txHash)
-				let failed = false
-				events.forEach((d) => {
-					const {
-						event: { method },
-					} = d
-					if (method === "BatchInterrupted" || method === "ExtrinsicFailed") {
-						failed = true
-					}
-				})
+	// return api.tx.utility
+	// 	.batchAll(batchedTx)
+	// 	.signAndSend(sender, ({ events = [], status }) => {
+	// 		onEvent(
+	// 			createEventInstance("Waiting for your to sign the transaction...")
+	// 		)
+	// 		if (status.isInBlock) {
+	// 			onEvent(
+	// 				createEventInstance(`Included in block : ${status.asInBlock}...`)
+	// 			)
+	// 			onSuccessfullSigning(createEventInstance(`${status.asInBlock}`))
+	// 		}
 
-				const eventLogs = events.map((d) => {
-					const {
-						phase,
-						event: { data, method, section },
-					} = d
-					return `${phase}: ${section}.${method}:: ${data}`
-				})
+	// 		if (status.isFinalized) {
+	// 			const txHash = status.asFinalized.toString()
+	// 			console.info("transaction hash: " + txHash)
+	// 			let failed = false
+	// 			events.forEach((d) => {
+	// 				const {
+	// 					event: { method },
+	// 				} = d
+	// 				if (method === "BatchInterrupted" || method === "ExtrinsicFailed") {
+	// 					failed = true
+	// 				}
+	// 			})
 
-				console.log(eventLogs)
+	// 			const eventLogs = events.map((d) => {
+	// 				const {
+	// 					phase,
+	// 					event: { data, method, section },
+	// 				} = d
+	// 				return `${phase}: ${section}.${method}:: ${data}`
+	// 			})
 
-				onFinish(
-					failed ? 1 : 0,
-					failed
-						? "Transaction failed due to unknown reason"
-						: "Added liquidity",
-					eventLogs,
-					isNil(txHash) ? "N/A" : txHash
-				)
-			}
-		})
+	// 			console.log(eventLogs)
+
+	// 			onFinish(
+	// 				failed ? 1 : 0,
+	// 				failed
+	// 					? "Transaction failed due to unknown reason"
+	// 					: "Added liquidity",
+	// 				eventLogs,
+	// 				isNil(txHash) ? "N/A" : txHash
+	// 			)
+	// 		}
+	// 	})
 }
 
 export default zapIn

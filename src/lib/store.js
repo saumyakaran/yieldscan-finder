@@ -21,6 +21,11 @@ const useInputAmount = create((set) => ({
 	setInputAmount: (inputAmount) => set(() => ({ inputAmount })),
 }))
 
+const useTips = create((set) => ({
+	isTipping: true,
+	setIsTipping: (isTipping) => set(() => ({ isTipping })),
+}))
+
 const useAccounts = create((set) => ({
 	accounts: null,
 	selectedAccount: null,
@@ -72,6 +77,7 @@ export {
 	useSelectedPool,
 	useInputToken,
 	useInputAmount,
+	useTips,
 	useWalletConnectionState,
 	useSelectedNetwork,
 	usePolkadotApi,

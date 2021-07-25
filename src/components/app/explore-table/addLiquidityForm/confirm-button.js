@@ -11,6 +11,7 @@ import {
 	useSelectedNetwork,
 	useSelectedPool,
 	useSwapRx,
+	useTips,
 	useWalletConnectionState,
 	useWalletPromise,
 } from "../../../../lib/store"
@@ -33,6 +34,7 @@ const ConfirmButton = () => {
 	const [addLiquidityTxData, setAddLiquidityTxData] = useState()
 	const [txData, setTxData] = useState()
 	const [stakingEvent, setStakingEvent] = useState()
+	const { isTipping } = useTips()
 	// const [transactionHash, setTransactionHash] = useState()
 	// const [errorMessage, setErrorMessage] = useState()
 
@@ -86,6 +88,9 @@ const ConfirmButton = () => {
 										return [val, s[1]]
 									} else return [val]
 								})
+							console.info(
+								`output balance from first swap: ${get(val, "output.balance")}`
+							)
 							get(val, "output.balance") &&
 								swapRx
 									.swap(
@@ -212,10 +217,29 @@ const ConfirmButton = () => {
 				}
 			},
 		}
-		zapIn(txData, apiInstance, handlers, get(selectedNetwork, "id")).catch((error) => {
+		zapIn(
+			txData,
+			apiInstance,
+			handlers,
+			get(selectedNetwork, "id"),
+			get(selectedNetwork, "addressPrefix"),
+			isTipping,
+			inputAmount
+		).catch((error) => {
 			handlers.onFinish(1, error.message)
 		})
 	}
+
+	useEffect(() => {
+		console.log(`
+		!isWalletConnected: ${!isWalletConnected}\n
+			isNil(txData): ${isNil(txData)}\n 
+			!isFinite(Number(inputAmount)): ${!isFinite(Number(inputAmount))}\n
+			Number(inputAmount) <= 0: ${Number(inputAmount) <= 0}\n
+			get(target, "length") !== get(swapTxData, "length")}: ${
+				get(target, "length") !== get(swapTxData, "length")
+			}}`)
+	}, [inputAmount, isWalletConnected, swapTxData, target, txData])
 
 	return (
 		<>
