@@ -87,52 +87,52 @@ const zapIn = async (
 	)
 	if (isTipping) batchedTx.push(tipTx)
 
-	// return api.tx.utility
-	// 	.batchAll(batchedTx)
-	// 	.signAndSend(sender, ({ events = [], status }) => {
-	// 		onEvent(
-	// 			createEventInstance("Waiting for your to sign the transaction...")
-	// 		)
-	// 		if (status.isInBlock) {
-	// 			onEvent(
-	// 				createEventInstance(`Included in block : ${status.asInBlock}...`)
-	// 			)
-	// 			onSuccessfullSigning(createEventInstance(`${status.asInBlock}`))
-	// 		}
+	return api.tx.utility
+		.batchAll(batchedTx)
+		.signAndSend(sender, ({ events = [], status }) => {
+			onEvent(
+				createEventInstance("Waiting for your to sign the transaction...")
+			)
+			if (status.isInBlock) {
+				onEvent(
+					createEventInstance(`Included in block : ${status.asInBlock}...`)
+				)
+				onSuccessfullSigning(createEventInstance(`${status.asInBlock}`))
+			}
 
-	// 		if (status.isFinalized) {
-	// 			const txHash = status.asFinalized.toString()
-	// 			console.info("transaction hash: " + txHash)
-	// 			let failed = false
-	// 			events.forEach((d) => {
-	// 				const {
-	// 					event: { method },
-	// 				} = d
-	// 				if (method === "BatchInterrupted" || method === "ExtrinsicFailed") {
-	// 					failed = true
-	// 				}
-	// 			})
+			if (status.isFinalized) {
+				const txHash = status.asFinalized.toString()
+				console.info("transaction hash: " + txHash)
+				let failed = false
+				events.forEach((d) => {
+					const {
+						event: { method },
+					} = d
+					if (method === "BatchInterrupted" || method === "ExtrinsicFailed") {
+						failed = true
+					}
+				})
 
-	// 			const eventLogs = events.map((d) => {
-	// 				const {
-	// 					phase,
-	// 					event: { data, method, section },
-	// 				} = d
-	// 				return `${phase}: ${section}.${method}:: ${data}`
-	// 			})
+				const eventLogs = events.map((d) => {
+					const {
+						phase,
+						event: { data, method, section },
+					} = d
+					return `${phase}: ${section}.${method}:: ${data}`
+				})
 
-	// 			console.log(eventLogs)
+				console.log(eventLogs)
 
-	// 			onFinish(
-	// 				failed ? 1 : 0,
-	// 				failed
-	// 					? "Transaction failed due to unknown reason"
-	// 					: "Added liquidity",
-	// 				eventLogs,
-	// 				isNil(txHash) ? "N/A" : txHash
-	// 			)
-	// 		}
-	// 	})
+				onFinish(
+					failed ? 1 : 0,
+					failed
+						? "Transaction failed due to unknown reason"
+						: "Added liquidity",
+					eventLogs,
+					isNil(txHash) ? "N/A" : txHash
+				)
+			}
+		})
 }
 
 export default zapIn
