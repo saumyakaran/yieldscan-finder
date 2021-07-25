@@ -100,6 +100,10 @@ export const tokenImage = {
 	POLKABTC: "https://apps.acala.network/static/media/polkaBTC.27cccd4a.svg",
 	PLM: "https://apps.acala.network/static/media/plasm.6f74714d.png",
 	PHA: "https://apps.acala.network/static/media/phala.fa4f3631.svg",
+	KUSD: "https://apps.karura.network/static/media/KUSD.8dcf14f0.svg",
+	KSM: "https://cryptologos.cc/logos/kusama-ksm-logo.svg?v=013",
+	LKSM: "https://apps.karura.network/static/media/LKSM.e3933ae1.svg",
+	KAR: "https://apps.karura.network/static/media/KAR.9e5c7ecd.svg",
 }
 
 export const getNetworkInfo = (networkName) => {
